@@ -46,7 +46,7 @@ COLUMNS = ["id", "category", "name", "price", "description"]
 
 app = FastAPI(title="Cafeteria Menu API", version="1.0.0")
 
-# CORS is pre-configured so a GitHub Pages frontend can call this backend.
+# CORS is pre-configured so a GitHub Pages web frontend can call this api.
 # "*" is the simplest setting for a public, read-mostly menu. To lock it down,
 # replace allow_origins with your exact Pages URL, e.g.
 #   allow_origins=["https://yourname.github.io"]
