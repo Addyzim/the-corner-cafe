@@ -26,12 +26,12 @@ Hosted **100% free on GitHub Pages**.
 - Dashboard: <https://console.cloudinary.com>
 - Upload presets (`main_preset`): <https://console.cloudinary.com/settings/upload>
 
-## Configure (top of `frontend/app.js`, the `CAFE` object)
+## Configure (top of `web/app.js`, the `CAFE` object)
 
 - Orders go to the **admin dashboard** (see "Order dashboard" below), not to
   WhatsApp — the customer is never redirected out of the app.
 - `CAFE.logo` — path to a logo image, e.g. `"./logo.png"` (drop the file in
-  `frontend/`). Leave `""` for text-only.
+  `web/`). Leave `""` for text-only.
 - About / Contacts copy uses `{ en, vi }` fields; menu items support `name_vi`
   and `category_vi` columns for the Vietnamese names.
 
@@ -41,7 +41,7 @@ Live order notifications + an admin dashboard at **`/admin.html`**. Optional —
 without it, orders still go to WhatsApp.
 
 1. Create a free project at <https://console.firebase.google.com>.
-2. Add a **Web app** (`</>`) and paste its config into `frontend/firebase-config.js`.
+2. Add a **Web app** (`</>`) and paste its config into `web/firebase-config.js`.
 3. **Build → Firestore Database → Create database** (production mode).
 4. **Build → Authentication → Sign-in method →** enable **Email/Password**, then
    **Users → Add user** to create your admin login.
@@ -74,25 +74,25 @@ without it, orders still go to WhatsApp.
 
 ```
 Cafeteria Site/
-├── frontend/              <- this folder is what GitHub Pages serves
+├── web/              <- this folder is what GitHub Pages serves
 │   ├── index.html         Loads Vue 3, Tailwind, and SheetJS from a CDN
 │   ├── app.js             The whole Vue app (state, methods, template)
 │   └── menu.json          The menu data the site reads (the "database")
-├── backend/               <- OPTIONAL: a FastAPI server, not used by Pages
+├── api/               <- OPTIONAL: a FastAPI server, not used by Pages
 │   ├── main.py            Keep it if you ever want a live API instead
 │   ├── requirements.txt
 │   └── menu.xlsx          Source spreadsheet for build_menu.py
-├── build_menu.py          Regenerates frontend/menu.json from menu.xlsx
-└── .github/workflows/     GitHub Action that deploys frontend/ to Pages
+├── build_menu.py          Regenerates web/menu.json from menu.xlsx
+└── .github/workflows/     GitHub Action that deploys web/ to Pages
 ```
 
 ## Run it locally
 
-Serve the `frontend` folder (the menu is fetched, so opening the file
+Serve the `web` folder (the menu is fetched, so opening the file
 directly with `file://` won't work):
 
 ```bash
-cd frontend
+cd web
 python -m http.server 5500    # then open http://127.0.0.1:5500
 ```
 
@@ -116,30 +116,45 @@ Prices are in Vietnamese Dong (VND) and shown as whole numbers (e.g. `75.000 ₫
 
 ## Updating the menu
 
-The live menu is `frontend/menu.json`. To change it, pick whichever is easier:
+The live menu is `web/menu.json`. To change it, pick whichever is easier:
 
 **A. In the browser (no tools).** Open the site → **Admin** → edit / import →
-**Export menu.json**. Replace `frontend/menu.json` in the repo with the
+**Export menu.json**. Replace `web/menu.json` in the repo with the
 downloaded file and commit. (On github.com you can drag the file straight onto
 the repo to commit it.)
 
-**B. From the spreadsheet.** Edit `backend/menu.xlsx` in Excel, then run:
+**B. From the spreadsheet.** Edit `api/menu.xlsx` in Excel, then run:
 
 ```bash
 python build_menu.py
 ```
 
-This regenerates `frontend/menu.json`. Commit it and push.
+This regenerates `web/menu.json`. Commit it and push.
 
-Either way, the GitHub Action redeploys automatically in ~30 seconds.
+Either way, commit to a branch, open a pull request, merge to `main`, then cut
+a release (see below) — the site updates within ~30 seconds of the tag push.
 
 ## How the free deploy works
 
-The static `frontend/` folder is published to **GitHub Pages** by the workflow
-in `.github/workflows/pages.yml` on every push to `main`. No server, no cost.
+The static `web/` folder is published to **GitHub Pages** by the workflow in
+`.github/workflows/pages.yml`. No server, no cost.
 
-The `backend/` FastAPI app is **optional** and not part of the live site — it's
-kept only in case you ever want a live API instead of the static JSON.
+The `api/` FastAPI app is **optional** and not part of the live site — it's
+kept only in case you ever want a live API instead of the static JSON. It's
+not containerized or deployed anywhere.
+
+## Releasing
+
+Deploys are gated behind a version tag, not every push to `main`:
+
+```bash
+git checkout main && git pull
+git tag vX.Y.Z   # X = major/breaking, Y = feature, Z = hotfix
+git push origin vX.Y.Z
+```
+
+Pushing the tag triggers `.github/workflows/pages.yml`, which publishes `web/`
+to GitHub Pages. A plain push to `main` (without a tag) no longer deploys.
 
 ## Moving to your own domain (e.g. `anotherdaycoffee.com`)
 

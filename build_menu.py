@@ -1,9 +1,9 @@
 """
 build_menu.py — turn the Excel menu into the static JSON the site reads.
 
-The static site (GitHub Pages) has no backend, so the menu lives in
-`frontend/menu.json`. Edit `backend/menu.xlsx` in Excel, run this script, and
-commit the regenerated `frontend/menu.json` to publish your changes.
+The static site (GitHub Pages) has no live backend, so the menu lives in
+`web/menu.json`. Edit `api/menu.xlsx` in Excel, run this script, and
+commit the regenerated `web/menu.json` to publish your changes.
 
     python build_menu.py
 
@@ -23,8 +23,8 @@ import os
 import pandas as pd
 
 HERE = os.path.dirname(__file__)
-EXCEL_PATH = os.path.join(HERE, "backend", "menu.xlsx")
-JSON_PATH = os.path.join(HERE, "frontend", "menu.json")
+EXCEL_PATH = os.path.join(HERE, "api", "menu.xlsx")
+JSON_PATH = os.path.join(HERE, "web", "menu.json")
 
 REQUIRED = ["id", "category", "name", "price"]
 OPTIONAL = ["name_vi", "category_vi", "description", "image"]

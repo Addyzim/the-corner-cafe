@@ -1,9 +1,10 @@
-name: Deploy frontend to GitHub Pages
+name: Deploy web to GitHub Pages
 
-# Publish the static `frontend/` folder to GitHub Pages on every push to main.
+# Publish the static `web/` folder to GitHub Pages, gated behind a vX.Y.Z tag
+# push (not every push to main) — see README's release section.
 on:
   push:
-    branches: [main]
+    tags: ["v*"]
   workflow_dispatch:
 
 permissions:
@@ -27,6 +28,6 @@ jobs:
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: ./frontend
+          path: ./web
       - id: deployment
         uses: actions/deploy-pages@v4

@@ -177,7 +177,7 @@ createApp({
     if (!firebase.apps.length) firebase.initializeApp(cfg);
     this.auth = firebase.auth();
     this.db = firebase.firestore();
-    // Images are stored via Cloudinary / the repo (frontend/images/), not
+    // Images are stored via Cloudinary / the repo (web/images/), not
     // Firebase Storage (Storage needs the paid Blaze plan).
     this.auth.onAuthStateChanged((u) => {
       this.user = u;
